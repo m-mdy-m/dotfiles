@@ -10,8 +10,6 @@ source "$BASH_DIR/prompt.sh"
 source "$BASH_DIR/aliases.sh"
 source "$BASH_DIR/functions.sh"
 
-shopt -s histappend checkwinsize autocd cdspell dirspell
-
 if [ -n "$PS1" ]; then
     mem=$(free -h 2>/dev/null | awk 'NR==2 {print $3"/"$2}')
     load=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | tr -d ',')
