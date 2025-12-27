@@ -114,7 +114,14 @@ install_rofi() {
     
     echo
 }
+install_tmux() {
+    print_info "Installing Tmux configuration..."
 
+    create_symlink "$DOTFILES_DIR/.config/tmux/.tmux.conf" \
+                   "$HOME/.config/tmux/.tmux.conf"
+
+    echo
+}
 install_all() {
     install_bash
     install_i3
@@ -123,7 +130,9 @@ install_all() {
     install_neofetch
     install_picom
     install_rofi
+    install_tmux
 }
+
 
 main() {
     print_header
@@ -169,7 +178,9 @@ main() {
     if ask_confirmation "Install Rofi launcher configuration?" "n"; then
         install_rofi
     fi
-    
+    if ask_confirmation "Install Tmux configuration?" "n"; then
+        install_tmux
+    fi
     echo
     print_success "Installation complete!"
     
