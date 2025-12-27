@@ -2,29 +2,22 @@
 
 [[ $- != *i* ]] && return
 
-BASH_MODULES_DIR="${HOME}/.bash"
+BASH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-load_module() {
-    local module="$1"
-    local module_path="${BASH_MODULES_DIR}/${module}.sh"
+source "$BASH_DIR/core.sh"
+source "$BASH_DIR/colors.sh"
+source "$BASH_DIR/prompt.sh"
+source "$BASH_DIR/aliases.sh"
+source "$BASH_DIR/functions.sh"
+
+shopt -s histappend checkwinsize autocd cdspell dirspell
+
+if [ -n "$PS1" ]; then
+    mem=$(free -h 2>/dev/null | awk 'NR==2 {print $3"/"$2}')
+    load=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | tr -d ',')
     
-    if [[ -f "$module_path" ]]; then
-        source "$module_path"
-    else
-        echo "Warning: Module '$module' not found at $module_path" >&2
-    fi
-}
-
-load_module "core"
-load_module "colors"
-load_module "prompt"
-load_module "aliases"
-load_module "functions"
-
-if [[ -f "${HOME}/.bashrc.local" ]]; then
-    source "${HOME}/.bashrc.local"
-fi
-
-if [[ -n "$PS1" ]] && [[ -f "${BASH_MODULES_DIR}/welcome.sh" ]]; then
-    source "${BASH_MODULES_DIR}/welcome.sh"
+    clear
+    echo -e "\033[38;5;111m  Welcome back, \033[1m$(whoami)\033[0m"
+    echo -e "\033[38;5;246m  RAM $mem • Load $load\033[0m"
+    echo
 fi
