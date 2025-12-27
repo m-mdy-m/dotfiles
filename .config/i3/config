@@ -1,58 +1,28 @@
-# ═══════════════════════════════════════════════════════════════════════════════
-# CORE SETTINGS
-# ═══════════════════════════════════════════════════════════════════════════════
-
 set $mod Mod4
 font pango:JetBrains Mono Medium 9
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MINIMAL DARK THEM
-# ═══════════════════════════════════════════════════════════════════════════════
+set $bg-dark #0a0a0a
+set $bg-light #141414
+set $text-white #e8e8e8
+set $text-gray #6e6e6e
+set $accent #7aa2f7
+set $border-inactive #1a1a1a
+set $border-urgent #f7768e
 
-set $bg-dark            #0a0a0a
-set $bg-darker          #050505
-set $bg-light           #141414
-set $text-white         #e8e8e8
-set $text-gray          #6e6e6e
-set $text-dim           #4a4a4a
-set $accent-primary     #7aa2f7
-set $accent-secondary   #2ac3de
-set $accent-success     #73daca
-set $accent-warning     #e0af68
-set $accent-error       #f7768e
+client.focused $accent $bg-light $text-white $accent
+client.focused_inactive $border-inactive $bg-dark $text-gray $border-inactive
+client.unfocused $border-inactive $bg-dark $text-gray $border-inactive
+client.urgent $border-urgent $border-urgent $text-white $border-urgent
 
-set $border-focused     #7aa2f7
-set $border-inactive    #1a1a1a
-set $border-urgent      #f7768e
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# WINDOW STYLING
-# ═══════════════════════════════════════════════════════════════════════════════
-
-#                       border              background      text            indicator
-client.focused          $border-focused     $bg-light       $text-white     $accent-secondary
-client.focused_inactive $border-inactive    $bg-dark        $text-gray      $border-inactive
-client.unfocused        $border-inactive    $bg-darker      $text-dim       $border-inactive
-client.urgent           $border-urgent      $accent-error   $text-white     $accent-warning
-
-# Window borders
 default_border pixel 1
 default_floating_border pixel 1
 for_window [class=".*"] border pixel 1
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# GAPS & SPACIN
-# ═══════════════════════════════════════════════════════════════════════════════
 
 gaps inner 8
 gaps outer 4
 smart_gaps on
 smart_borders on
 hide_edge_borders smart
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# AUTOSTART
-# ═══════════════════════════════════════════════════════════════════════════════
 
 exec --no-startup-id ~/.config/i3/random-bg.sh
 exec --no-startup-id dex --autostart --environment i3
@@ -61,12 +31,7 @@ exec --no-startup-id nm-applet
 exec_always --no-startup-id setxkbmap -layout us,ir -option grp:alt_shift_toggle
 exec --no-startup-id xset r rate 200 30
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MEDIA CONTROLS
-# ═══════════════════════════════════════════════════════════════════════════════
-
 set $refresh_i3status killall -SIGUSR1 i3status
-
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +3% && $refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -3% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
@@ -74,26 +39,18 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 8
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 8
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# KEY BINDINGS
-# ═══════════════════════════════════════════════════════════════════════════════
-
 floating_modifier $mod
 
-# Launch applications
 bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec alacritty --class floating-terminal
 bindsym $mod+d exec rofi -show drun -theme ~/.config/rofi/config.rasi
 bindsym $mod+Shift+d exec rofi -show run -theme ~/.config/rofi/config.rasi
 bindsym $mod+Tab exec rofi -show window -theme ~/.config/rofi/config.rasi
 
-# Window management
 bindsym $mod+Shift+q kill
 
-# Screenshots
 bindsym Print exec --no-startup-id bash -c 'mkdir -p "$HOME/screenshot" && scrot "$HOME/screenshot/%Y-%m-%d_%H-%M-%S.png"'
 
-# Focus movement (vim-style)
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
@@ -103,7 +60,6 @@ bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
-# Move windows
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
@@ -113,28 +69,19 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-# Split orientation
 bindsym $mod+backslash split h
 bindsym $mod+minus split v
 
-# Fullscreen
 bindsym $mod+f fullscreen toggle
 
-# Layout modes
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
-# Floating toggle
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 
-# Focus parent
 bindsym $mod+a focus parent
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# WORKSPACES
-# ═══════════════════════════════════════════════════════════════════════════════
 
 set $ws1 "1"
 set $ws2 "2"
@@ -147,7 +94,6 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
-# Switch workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
 bindsym $mod+3 workspace number $ws3
@@ -159,7 +105,6 @@ bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
-# Move container to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
 bindsym $mod+Shift+2 move container to workspace number $ws2
 bindsym $mod+Shift+3 move container to workspace number $ws3
@@ -171,30 +116,20 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SYSTEM CONTROLS
-# ═══════════════════════════════════════════════════════════════════════════════
-
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
 bindsym $mod+Shift+x exec i3lock -c 000000
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# RESIZE MODE
-# ═══════════════════════════════════════════════════════════════════════════════
 
 mode "resize" {
     bindsym h resize shrink width 10 px or 10 ppt
     bindsym j resize grow height 10 px or 10 ppt
     bindsym k resize shrink height 10 px or 10 ppt
     bindsym l resize grow width 10 px or 10 ppt
-
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
     bindsym Right resize grow width 10 px or 10 ppt
-
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym $mod+r mode "default"
@@ -202,45 +137,31 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# FLOATING RULES
-# ═══════════════════════════════════════════════════════════════════════════════
-
 for_window [class="floating-terminal"] floating enable, resize set 900 600, move position center
 for_window [class="Pavucontrol"] floating enable, resize set 800 600, move position center
 for_window [class="Blueman-manager"] floating enable, resize set 700 500, move position center
 for_window [class="Nm-connection-editor"] floating enable, resize set 600 400, move position center
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STATUS BAR
-# ═══════════════════════════════════════════════════════════════════════════════
-
 bar {
     status_command i3status -c ~/.config/i3status/config
     position top
     height 28
-    
-    # Minimal settings
     workspace_buttons yes
     workspace_min_width 32
     separator_symbol " │ "
     strip_workspace_numbers no
     tray_output primary
     tray_padding 4
-    
-    # Typography
     font pango:JetBrains Mono Medium 9
     
     colors {
         background $bg-dark
         statusline $text-white
-        separator  $text-dim
-        
-        #                  border              background          text
-        focused_workspace  $accent-primary     $accent-primary     $bg-dark
-        active_workspace   $bg-light           $bg-light           $text-white
-        inactive_workspace $bg-dark            $bg-dark            $text-gray
-        urgent_workspace   $accent-error       $accent-error       $text-white
-        binding_mode       $accent-warning     $accent-warning     $bg-dark
+        separator $text-gray
+        focused_workspace $accent $accent $bg-dark
+        active_workspace $bg-light $bg-light $text-white
+        inactive_workspace $bg-dark $bg-dark $text-gray
+        urgent_workspace $border-urgent $border-urgent $text-white
+        binding_mode $border-urgent $border-urgent $text-white
     }
 }

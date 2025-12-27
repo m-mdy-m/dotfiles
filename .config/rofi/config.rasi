@@ -1,28 +1,12 @@
-/*
- * Rofi Modern Dark Theme
- * Clean, minimal, and beautiful
- */
-
 configuration {
     display-drun: "  Applications";
     display-run: "  Run";
     display-window: "  Windows";
-    display-filebrowser: "  Files";
     show-icons: true;
     icon-theme: "Papirus-Dark";
     font: "JetBrains Mono Medium 11";
-    modi: "drun,run,window,filebrowser";
-    kb-accept-entry: "Control+m,Return,KP_Enter";
-    kb-remove-to-eol: "Control+Shift+e";
-    kb-mode-next: "Shift+Right,Control+Tab";
-    kb-mode-previous: "Shift+Left,Control+Shift+Tab";
-    kb-row-left: "Control+Page_Up";
-    kb-row-right: "Control+Page_Down";
-    kb-row-select: "Control+space";
-    kb-screenshot: "Alt+Shift+S";
-    kb-ellipsize: "Alt+period";
+    modi: "drun,run,window";
     terminal: "alacritty";
-    run-shell-command: "{terminal} -e {cmd}";
 }
 
 * {
@@ -38,26 +22,14 @@ window {
     border-radius: 12px;
     width: 28%;
     location: center;
-    anchor: center;
-    x-offset: 0;
-    y-offset: 0;
 }
 
 prompt {
-    enabled: true;
     padding: 8px 12px;
     background-color: #7aa2f7;
     text-color: #1a1b26;
     border-radius: 6px;
     margin: 0px 8px 0px 0px;
-}
-
-textbox-prompt-colon {
-    expand: false;
-    str: "";
-    background-color: transparent;
-    text-color: inherit;
-    padding: 8px 4px;
 }
 
 entry {
@@ -71,74 +43,33 @@ entry {
 
 inputbar {
     children: [ prompt, entry ];
-    background-color: transparent;
-    text-color: #c0caf5;
-    expand: false;
     border-radius: 6px;
     margin: 0px 0px 20px 0px;
-    padding: 0px;
-    position: center;
 }
 
 listview {
-    background-color: transparent;
     columns: 1;
     lines: 8;
-    cycle: true;
-    dynamic: true;
-    scrollbar: false;
-    layout: vertical;
-    reverse: false;
-    fixed-height: true;
-    fixed-columns: true;
     spacing: 4px;
-    margin: 0px 0px 0px 0px;
-    border: 0px;
 }
 
 element {
-    background-color: transparent;
-    text-color: #c0caf5;
     orientation: horizontal;
     border-radius: 8px;
     padding: 10px 12px;
-    margin: 0px 0px 0px 0px;
     border: 1px;
     border-color: transparent;
 }
 
 element-icon {
-    background-color: transparent;
-    text-color: inherit;
     size: 20px;
     margin: 0px 12px 0px 0px;
 }
 
 element-text {
-    background-color: transparent;
-    text-color: inherit;
     expand: true;
     horizontal-align: 0;
     vertical-align: 0.5;
-    margin: 0px 0px 0px 0px;
-}
-
-element normal.normal {
-    background-color: transparent;
-    text-color: #c0caf5;
-    border-color: transparent;
-}
-
-element normal.urgent {
-    background-color: transparent;
-    text-color: #f7768e;
-    border-color: transparent;
-}
-
-element normal.active {
-    background-color: transparent;
-    text-color: #7aa2f7;
-    border-color: transparent;
 }
 
 element selected.normal {
@@ -147,67 +78,7 @@ element selected.normal {
     border-color: #7aa2f7;
 }
 
-element selected.urgent {
-    background-color: #f7768e22;
-    text-color: #f7768e;
-    border-color: #f7768e;
-}
-
-element selected.active {
-    background-color: #9ece6a22;
-    text-color: #9ece6a;
-    border-color: #9ece6a;
-}
-
-element alternate.normal {
-    background-color: transparent;
-    text-color: #c0caf5;
-    border-color: transparent;
-}
-
-element alternate.urgent {
-    background-color: transparent;
-    text-color: #f7768e;
-    border-color: transparent;
-}
-
-element alternate.active {
-    background-color: transparent;
-    text-color: #7aa2f7;
-    border-color: transparent;
-}
-
 mainbox {
-    background-color: transparent;
-    border: 0px;
-    border-radius: 0px;
-    border-color: transparent;
     children: [ inputbar, listview ];
-    spacing: 0px;
     padding: 20px;
-}
-
-message {
-    background-color: #16161e;
-    text-color: #c0caf5;
-    border-radius: 6px;
-    border: 1px;
-    border-color: #3b4261;
-    padding: 12px;
-    margin: 0px 0px 20px 0px;
-}
-
-textbox {
-    background-color: transparent;
-    text-color: #c0caf5;
-    vertical-align: 0.5;
-    horizontal-align: 0.0;
-    highlight: #7aa2f7;
-}
-
-error-message {
-    background-color: #f7768e;
-    text-color: #1a1b26;
-    border-radius: 6px;
-    padding: 12px;
 }

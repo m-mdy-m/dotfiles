@@ -1,8 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 WALLPAPER_DIR="$HOME/Pictures"
 
-RANDOM_WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' \) | shuf -n 1)
+if [ ! -d "$WALLPAPER_DIR" ]; then
+    exit 0
+fi
 
-[ -n "$RANDOM_WALLPAPER" ] && feh --bg-fill "$RANDOM_WALLPAPER"
+RANDOM_WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' \) 2>/dev/null | shuf -n 1)
 
+if [ -n "$RANDOM_WALLPAPER" ] && command -v feh &> /dev/null; then
+    feh --bg-fill "$RANDOM_WALLPAPER"
+fi
