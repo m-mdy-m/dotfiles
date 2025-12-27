@@ -38,13 +38,13 @@ create_symlink() {
     local source="$1"
     local target="$2"
     
-    backup_file "$target"
+    if [ -e "$target" ] || [ -L "$target" ]; then
+        backup_file "$target"
+    fi
     
-    local target_dir="$(dirname "$target")"
-    mkdir -p "$target_dir"
-    
+    mkdir -p "$(dirname "$target")"
     ln -sf "$source" "$target"
-    print_success "Linked $(basename "$target")"
+    print_success "Linked: $target -> $source"
 }
 
 install_bash() {
@@ -52,9 +52,15 @@ install_bash() {
     
     create_symlink "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
     
-    print_info "Sourcing new bashrc..."
     source "$HOME/.bashrc" 2>/dev/null || true
-    
+    mkdir -p "$HOME/.bash"
+    for module in "$DOTFILES_DIR"/bash/modules/*.sh; do
+        if [ -f "$module" ]; then
+            module_name=$(basename "$module")
+            create_symlink "$module" "$HOME/.bash/$module_name"
+        fi
+    done
+    print_info "Sourcing new bashrc..."
     echo
 }
 
