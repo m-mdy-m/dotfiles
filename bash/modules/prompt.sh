@@ -20,12 +20,28 @@ __git_prompt() {
 
 __prompt_command() {
     local exit=$?
-    local cwd="${PWD/#$HOME/~}"
-    
-    local status='\033[38;5;108m▶\033[0m'
-    [ $exit -ne 0 ] && status='\033[38;5;204m▶\033[0m'
-    
-    PS1="\[\033[38;5;111m\]${cwd}\[\033[0m\]$(__git_prompt) ${status} "
+    local display_cwd
+
+    if [[ "$PWD" == "$HOME" ]]; then
+        display_cwd="~"
+    else
+        if git rev-parse --is-inside-work-tree &>/dev/null; then
+            local git_root
+            git_root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+            if [[ -n "$git_root" ]]; then
+                display_cwd="$(basename "$git_root")"
+            else
+                display_cwd="$(basename "$PWD")"
+            fi
+        else
+            display_cwd="$(basename "$PWD")"
+        fi
+    fi
+
+    local status_char='\033[38;5;108m▶\033[0m'
+    [ $exit -ne 0 ] && status_char='\033[38;5;204m▶\033[0m'
+
+    PS1="\[\033[38;5;111m\]${display_cwd}\[\033[0m\]$(__git_prompt) ${status_char} "
 }
 
 PROMPT_COMMAND='__prompt_command'
