@@ -67,8 +67,8 @@ install_bash() {
 install_i3() {
     print_info "Installing i3 configuration..."
     
-    create_symlink "$DOTFILES_DIR/i3/config" "$HOME/.config/i3/config"
-    create_symlink "$DOTFILES_DIR/i3/scripts/random-bg.sh" "$HOME/.config/i3/random-bg.sh"
+    create_symlink "$DOTFILES_DIR/.config/i3/config" "$HOME/.config/i3/config"
+    create_symlink "$DOTFILES_DIR/.config/i3/random-bg.sh" "$HOME/.config/i3/random-bg.sh"
     
     chmod +x "$HOME/.config/i3/random-bg.sh"
     
@@ -78,7 +78,7 @@ install_i3() {
 install_i3status() {
     print_info "Installing i3status configuration..."
     
-    create_symlink "$DOTFILES_DIR/i3status/config" "$HOME/.config/i3status/config"
+    create_symlink "$DOTFILES_DIR/.config/i3status/config" "$HOME/.config/i3status/config"
     
     echo
 }
