@@ -1,51 +1,23 @@
 general {
     colors = true
-    interval = 2
-    color_good = "#6c7086"
-    color_degraded = "#7c6f64"
-    color_bad = "#5c5c5c"
+    interval = 5
+    color_good = "#4c4c4c"
+    color_degraded = "#4c4c4c"
+    color_bad = "#4c4c4c"
     markup = "pango"
 }
 
 order += "wireless _first_"
-order += "ethernet _first_"
-order += "cpu_usage"
-order += "memory"
-order += "disk /"
 order += "battery all"
-order += "volume master"
 order += "tztime local"
 
 wireless _first_ {
-    format_up = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%essid</span>"
-    format_down = ""
-}
-
-ethernet _first_ {
-    format_up = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>eth</span>"
-    format_down = ""
-}
-
-cpu_usage {
-    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%usage</span>"
-    max_threshold = 90
-    degraded_threshold = 75
-}
-
-memory {
-    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%used</span>"
-    threshold_degraded = "2G"
-    threshold_critical = "512M"
-}
-
-disk "/" {
-    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%percentage_used</span>"
-    low_threshold = 10
-    threshold_type = percentage_avail
+    format_up = "<span foreground='#6c6c6c'>%essid</span>"
+    format_down = "<span foreground='#3c3c3c'>disconnected</span>"
 }
 
 battery all {
-    format = "<span foreground='#6c7086'>%status</span> <span foreground='#a8a8a8'>%percentage</span>"
+    format = "<span foreground='#6c6c6c'>%percentage</span>"
     format_down = ""
     status_chr = ""
     status_bat = ""
@@ -57,14 +29,6 @@ battery all {
     hide_seconds = true
 }
 
-volume master {
-    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%volume</span>"
-    format_muted = "<span foreground='#5c5c5c'> </span><span foreground='#5c5c5c'>mute</span>"
-    device = "default"
-    mixer = "Master"
-    mixer_idx = 0
-}
-
 tztime local {
-    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%H:%M</span> <span foreground='#4c4c4c'>·</span> <span foreground='#8c8c8c'>%d %b</span>"
+    format = "<span foreground='#8c8c8c'>%H:%M</span>"
 }
