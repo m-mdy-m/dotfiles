@@ -1,39 +1,94 @@
 #!/usr/bin/env bash
-shopt -s histappend checkwinsize autocd cdspell dirspell nocaseglob cmdhist histreedit histverify
+
+# ── Shell Options 
+shopt -s histappend  
+shopt -s checkwinsize 
+shopt -s autocd      
+shopt -s cdspell     
+shopt -s dirspell    
+shopt -s nocaseglob  
+shopt -s cmdhist     
+shopt -s histreedit  
+shopt -s histverify  
+shopt -s dotglob     
+shopt -s extglob     
+shopt -s globstar    
+
+# ── History Configuration 
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=50000
 export HISTFILESIZE=100000
-export HISTTIMEFORMAT='%F %T '
-export HISTIGNORE='ls:ll:cd:pwd:bg:fg:history:clear'
+export HISTTIMEFORMAT='%F %T  '
+export HISTIGNORE='ls:ll:la:cd:pwd:bg:fg:history:clear:exit:q'
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
-# Editor
-export EDITOR=vim
-export VISUAL=vim
+if command -v vim &>/dev/null; then
+    export EDITOR=vim
+    export VISUAL=vim
+fi
+
+# ── Pager Configuration
 export PAGER=less
+export LESS='-R -F -X -i -M -g'
+export LESS_TERMCAP_mb=$'\E[1;31m'  
+export LESS_TERMCAP_md=$'\E[1;36m'     
+export LESS_TERMCAP_me=$'\E[0m'        
+export LESS_TERMCAP_so=$'\E[01;44;33m' 
+export LESS_TERMCAP_se=$'\E[0m'        
+export LESS_TERMCAP_us=$'\E[1;32m'     
+export LESS_TERMCAP_ue=$'\E[0m'        
 
-export LESS='-R -F -X -i -M'
-export LESS_TERMCAP_mb=$'\E[1;31m'
-export LESS_TERMCAP_md=$'\E[1;36m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[1;32m'
-export LESS_TERMCAP_ue=$'\E[0m'
-
-# GPG configuration
-export GPG_TTY=$(tty)
-
+# ── Terminal Configuration 
 export TERM=xterm-256color
 export COLORTERM=truecolor
+export CLICOLOR=1
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
-if [[ -d "$HOME/.local/bin" ]] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    export PATH="$HOME/.local/bin:$PATH"
+export GPG_TTY=$(tty)
+
+set -o vi                
+
+[[ -f /etc/bash_completion ]] && source /etc/bash_completion
+[[ -f /usr/share/bash-completion/bash_completion ]] && source /usr/share/bash-completion/bash_completion
+
+# Git completion
+if [[ -f /usr/share/bash-completion/completions/git ]]; then
+    source /usr/share/bash-completion/completions/git
 fi
 
-if [[ -d "$HOME/bin" ]] && [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-    export PATH="$HOME/bin:$PATH"
+# ── FZF Configuration ────
+if command -v fzf &>/dev/null; then
+    export FZF_DEFAULT_OPTS="
+        --color=bg+:#1a1a1a,bg:#0a0a0a,border:#1a1a1a,spinner:#6c6c6c
+        --color=hl:#a8a8a8,fg:#808080,header:#6c6c6c,info:#6c6c6c
+        --color=marker:#a8a8a8,fg+:#a8a8a8,prompt:#6c6c6c,pointer:#a8a8a8
+        --color=hl+:#ffffff
+        --layout=reverse
+        --border=rounded
+        --height=40%
+    "
+    
+    # Use fd or find
+    if command -v fd &>/dev/null; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    else
+        export FZF_DEFAULT_COMMAND='find . -type f ! -path "*/\\.git/*"'
+    fi
+    
+    # Load fzf keybindings
+    [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
+    [[ -f /usr/share/doc/fzf/examples/key-bindings.bash ]] && source /usr/share/doc/fzf/examples/key-bindings.bash
 fi
 
-set -o vi
+# ── Development Tools ────
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+export BAT_THEME="base16"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
-stty -ixon
+# ── Security ─────────────
+umask 022                     # Default file permissions
+
+# ── Performance ──────────
+ulimit -n 10240              # Increase file descriptor limit

@@ -1,122 +1,145 @@
 #!/usr/bin/env bash
 
-alias ls='ls --color=auto --group-directories-first'
-alias ll='ls -alFh'
-alias la='ls -A'
-alias l='ls -CF'
-alias lt='ls -lhtr'
-alias lsd='ls -d */'
-alias lsf='ls -p | grep -v /'
-alias lh='ls -lh'
-alias lS='ls -lhS'
+# ── Core ─────────────────────────────────────────────────────────────
+alias c='clear'
+alias q='exit'
+alias h='history'
+alias reload='exec $SHELL -l'
 
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-alias rg='grep -r'
-
+# ── Navigation ───────────────────────────────────────────────────────
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias .....='cd ../../../..'
 alias ~='cd ~'
 alias -- -='cd -'
-alias cd..='cd ..'
 
+# ── Listing ──────────────────────────────────────────────────────────
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -lah'
+alias la='ls -A'
+alias lt='ls -laht'
+
+# ── File Operations ──────────────────────────────────────────────────
 alias cp='cp -iv'
 alias mv='mv -iv'
-alias rm='rm -Iv'
+alias rm='rm -Iv --preserve-root'
 alias mkdir='mkdir -pv'
-alias rmdir='rmdir -v'
+alias mkd='mkdir -pv'
 
+# ── System Info ──────────────────────────────────────────────────────
 alias df='df -h'
 alias du='du -h'
-alias dus='du -sh'
-alias dud='du -d 1 -h'
 alias free='free -h'
 alias ps='ps auxf'
 alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
-alias jobs='jobs -l'
-
-alias ping='ping -c 5'
 alias ports='netstat -tulanp'
-alias listening='lsof -i -P | grep LISTEN'
+alias listening='ss -tuln'
+
+# ── Network ──────────────────────────────────────────────────────────
+alias ping='ping -c 5'
 alias myip='curl -s ifconfig.me'
-alias localip="ip addr show | grep 'inet ' | grep -v 127.0.0.1 | awk '{print \$2}' | cut -d/ -f1"
+alias localip="ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v 127.0.0.1"
+alias speedtest='curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -'
 
-alias c='clear'
-alias h='history'
-alias j='jobs -l'
-alias path='echo -e ${PATH//:/\\n}'
-alias now='date +"%T"'
-alias nowtime='date +"%T"'
-alias nowdate='date +"%Y-%m-%d"'
-alias week='date +%V'
-
+# ── Git ──────────────────────────────────────────────────────────────
 alias g='git'
 alias gs='git status -sb'
+alias gss='git status'
 alias ga='git add'
-alias gaa='git add --all'
+alias gaa='git add .'
+alias gap='git add -p'
 alias gc='git commit -v'
 alias gcm='git commit -m'
-alias gcs='git commit -S -m'
 alias gca='git commit --amend'
+alias gcan='git commit --amend --no-edit'
 alias gp='git push'
+alias gpf='git push --force-with-lease'
 alias gpl='git pull'
+alias gplr='git pull --rebase'
 alias gf='git fetch'
+alias gfa='git fetch --all'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -d'
+alias gbD='git branch -D'
 alias gco='git checkout'
 alias gcb='git checkout -b'
+alias gcm='git checkout main || git checkout master'
 alias gm='git merge'
+alias gma='git merge --abort'
 alias gd='git diff'
-alias gdc='git diff --cached'
-alias gl='git log --oneline --graph --decorate --all -20'
+alias gds='git diff --staged'
+alias gl='git log --oneline --graph --decorate -20'
+alias gla='git log --oneline --graph --decorate --all -20'
 alias gll='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
 alias gst='git stash'
 alias gsta='git stash apply'
 alias gstp='git stash pop'
 alias gstl='git stash list'
-alias gclone='git clone'
-alias gr='git remote'
-alias grv='git remote -v'
+alias gstd='git stash drop'
+alias gclean='git clean -fd'
+alias greset='git reset --hard'
+alias gr='git remote -v'
+alias grao='git remote add origin'
 
+# ── Docker ───────────────────────────────────────────────────────────
 alias d='docker'
-alias dc='docker-compose'
+alias dc='docker compose'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias di='docker images'
+alias drmi='docker rmi'
+alias drm='docker rm'
 alias dex='docker exec -it'
 alias dlogs='docker logs -f'
-alias dprune='docker system prune -af'
 alias dstop='docker stop $(docker ps -q)'
+alias dclean='docker system prune -af --volumes'
+alias dkill='docker kill $(docker ps -q)'
 
+alias dcup='docker compose up -d'
+alias dcdown='docker compose down'
+alias dclogs='docker compose logs -f'
+alias dcps='docker compose ps'
+alias dcrestart='docker compose restart'
+
+# ── Tmux ─────────────────────────────────────────────────────────────
 alias t='tmux'
 alias ta='tmux attach -t'
 alias tl='tmux list-sessions'
 alias tn='tmux new -s'
 alias tk='tmux kill-session -t'
+alias tka='tmux kill-server'
 
-alias v='vim'
-alias vi='vim'
-alias svi='sudo vim'
+# ── Editor ───────────────────────────────────────────────────────────
+alias v='$EDITOR'
+alias vim='$EDITOR'
+alias vi='$EDITOR'
 
+# ── Config Shortcuts ─────────────────────────────────────────────────
 alias bashrc='$EDITOR ~/.bashrc'
+alias aliases='$EDITOR ~/.bash/aliases.sh'
 alias vimrc='$EDITOR ~/.vimrc'
-alias i3config='$EDITOR ~/.config/i3/config'
-alias reload='source ~/.bashrc'
-alias reload-i3='i3-msg reload'
-alias restart-i3='i3-msg restart'
 
-alias meminfo='free -h'
-alias cpuinfo='lscpu'
-alias diskinfo='df -h'
-alias biggest='du -sh * | sort -rh | head -10'
-alias temp='sensors'
+# ── Disk Usage ───────────────────────────────────────────────────────
+alias usage='du -sh * | sort -rh | head -10'
+alias biggest='find . -type f -exec du -h {} + | sort -rh | head -20'
+alias diskspace='df -h | grep -E "^(/dev/|Filesystem)"'
 
-alias dt='date "+%Y%m%d%H%M%S"'
+# ── Process Management ───────────────────────────────────────────────
+alias killport='kill_port'  # Function defined in functions.sh
+alias psmem='ps auxf | sort -nr -k 4 | head -10'
+alias pscpu='ps auxf | sort -nr -k 3 | head -10'
+
+# ── Time & Date ──────────────────────────────────────────────────────
+alias now='date +"%T"'
+alias today='date +"%Y-%m-%d"'
 alias timestamp='date +%s'
+alias week='date +%V'
 
-alias weather='curl wttr.in'
-alias moon='curl wttr.in/Moon'
+# ── Shortcuts ────────────────────────────────────────────────────────
+alias path='echo -e ${PATH//:/\\n}'
+alias cleanup='find . -type f -name "*.DS_Store" -ls -delete'
+alias reload-bashrc='source ~/.bashrc'
+
+# ── Background Jobs ──────────────────────────────────────────────────
+alias j='jobs -l'
