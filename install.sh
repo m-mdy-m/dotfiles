@@ -1,197 +1,273 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
-export DOTFILES_DIR
+readonly DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
+readonly STATE_FILE="$HOME/.dotfiles_state"
 
-. "$DOTFILES_DIR/scripts/common.sh"
+source "$DOTFILES_DIR/scripts/common.sh"
 
-ask_confirmation() {
-    local prompt="$1"
-    local default="${2:-n}"
-    local response
-    
-    if [[ "$default" == "y" ]]; then
-        prompt="$prompt [Y/n]: "
-    else
-        prompt="$prompt [y/N]: "
-    fi
-    
-    read -p "$prompt" response
-    response="${response:-$default}"
-    
-    [[ "$response" =~ ^[Yy]$ ]]
-}
-
-backup_file() {
-    local file="$1"
-    if [[ -e "$file" ]] || [[ -L "$file" ]]; then
-        mkdir -p "$BACKUP_DIR"
-        print_warning "Backing up existing $(basename "$file")"
-        mv "$file" "$BACKUP_DIR/"
+ensure_directory() {
+    local dir="$1"
+    if [[ ! -d "$dir" ]]; then
+        mkdir -p "$dir"
+        print_success "Created directory: $dir"
     fi
 }
 
-create_symlink() {
+backup_if_exists() {
+    local target="$1"
+    if [[ -e "$target" ]] || [[ -L "$target" ]]; then
+        ensure_directory "$BACKUP_DIR"
+        local backup_path="$BACKUP_DIR/$(basename "$target")"
+        cp -r "$target" "$backup_path" 2>/dev/null || true
+        print_warning "Backed up: $(basename "$target")"
+    fi
+}
+
+install_file() {
     local source="$1"
     local target="$2"
     
-    if [ -e "$target" ] || [ -L "$target" ]; then
-        backup_file "$target"
+    if [[ ! -f "$source" ]]; then
+        print_error "Source file not found: $source"
+        return 1
     fi
     
-    mkdir -p "$(dirname "$target")"
-    ln -sf "$source" "$target"
-    print_success "Linked: $target -> $source"
+    backup_if_exists "$target"
+    ensure_directory "$(dirname "$target")"
+    
+    cp "$source" "$target"
+    
+    if [[ -x "$source" ]]; then
+        chmod +x "$target"
+    fi
+    
+    echo "$target:$source:$(date +%s)" >> "$STATE_FILE"
+    print_success "Installed: $(basename "$target")"
 }
 
 install_bash() {
-    print_info "Installing Bash configuration..."
+    print_header "Bash Configuration"
     
-    create_symlink "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
+    install_file "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
     
-    source "$HOME/.bashrc" 2>/dev/null || true
-    mkdir -p "$HOME/.bash"
+    ensure_directory "$HOME/.bash"
     for module in "$DOTFILES_DIR"/bash/modules/*.sh; do
-        if [ -f "$module" ]; then
-            module_name=$(basename "$module")
-            create_symlink "$module" "$HOME/.bash/$module_name"
-        fi
+        [[ -f "$module" ]] || continue
+        install_file "$module" "$HOME/.bash/$(basename "$module")"
     done
-    print_info "Sourcing new bashrc..."
+    
+    print_info "Run 'source ~/.bashrc' to apply changes"
     echo
 }
 
 install_i3() {
-    print_info "Installing i3 configuration..."
+    print_header "i3 Window Manager"
     
-    create_symlink "$DOTFILES_DIR/.config/i3/config" "$HOME/.config/i3/config"
-    create_symlink "$DOTFILES_DIR/.config/i3/random-bg.sh" "$HOME/.config/i3/random-bg.sh"
+    ensure_directory "$HOME/.config/i3"
+    install_file "$DOTFILES_DIR/.config/i3/config" "$HOME/.config/i3/config"
+    install_file "$DOTFILES_DIR/.config/i3/random-bg.sh" "$HOME/.config/i3/random-bg.sh"
     
-    chmod +x "$HOME/.config/i3/random-bg.sh"
-    
+    print_info "Run 'i3-msg reload' to apply changes"
     echo
 }
 
 install_i3status() {
-    print_info "Installing i3status configuration..."
+    print_header "i3status"
     
-    create_symlink "$DOTFILES_DIR/.config/i3status/config" "$HOME/.config/i3status/config"
-    
+    ensure_directory "$HOME/.config/i3status"
+    install_file "$DOTFILES_DIR/.config/i3status/config" "$HOME/.config/i3status/config"
     echo
 }
 
 install_kitty() {
-    print_info "Installing Kitty configuration..."
+    print_header "Kitty Terminal"
     
-    create_symlink "$DOTFILES_DIR/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
-    
+    ensure_directory "$HOME/.config/kitty"
+    install_file "$DOTFILES_DIR/.config/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
     echo
 }
 
 install_neofetch() {
-    print_info "Installing Neofetch configuration..."
+    print_header "Neofetch"
     
-    create_symlink "$DOTFILES_DIR/neofetch/config.conf" "$HOME/.config/neofetch/config.conf"
-    
+    ensure_directory "$HOME/.config/neofetch"
+    install_file "$DOTFILES_DIR/.config/neofetch/config.conf" "$HOME/.config/neofetch/config.conf"
     echo
 }
 
 install_picom() {
-    print_info "Installing Picom configuration..."
+    print_header "Picom Compositor"
     
-    create_symlink "$DOTFILES_DIR/picom/picom.conf" "$HOME/.config/picom/picom.conf"
-    
+    ensure_directory "$HOME/.config/picom"
+    install_file "$DOTFILES_DIR/.config/picom/picom.conf" "$HOME/.config/picom/picom.conf"
     echo
 }
 
 install_rofi() {
-    print_info "Installing Rofi configuration..."
+    print_header "Rofi Launcher"
     
-    create_symlink "$DOTFILES_DIR/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
-    
+    ensure_directory "$HOME/.config/rofi"
+    install_file "$DOTFILES_DIR/.config/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
     echo
 }
+
 install_tmux() {
-    print_info "Installing Tmux configuration..."
-
-    create_symlink "$DOTFILES_DIR/.config/tmux/.tmux.conf" \
-                   "$HOME/.config/tmux/.tmux.conf"
-
+    print_header "Tmux"
+    
+    ensure_directory "$HOME/.config/tmux"
+    install_file "$DOTFILES_DIR/.config/tmux/.tmux.conf" "$HOME/.config/tmux/.tmux.conf"
     echo
 }
-install_all() {
-    install_bash
-    install_i3
-    install_i3status
-    install_kitty
-    install_neofetch
-    install_picom
-    install_rofi
-    install_tmux
+
+update_config() {
+    print_header "Updating Configuration"
+    
+    if [[ ! -f "$STATE_FILE" ]]; then
+        print_error "No installation state found. Run install first."
+        return 1
+    fi
+    
+    while IFS=: read -r target source timestamp; do
+        if [[ -f "$source" ]]; then
+            cp "$source" "$target"
+            print_success "Updated: $(basename "$target")"
+        fi
+    done < "$STATE_FILE"
+    
+    print_success "All configurations updated"
+    echo
 }
 
+uninstall_config() {
+    print_header "Uninstalling Dotfiles"
+    
+    if [[ ! -f "$STATE_FILE" ]]; then
+        print_error "No installation state found"
+        return 1
+    fi
+    
+    while IFS=: read -r target source timestamp; do
+        if [[ -f "$target" ]]; then
+            rm "$target"
+            print_success "Removed: $(basename "$target")"
+        fi
+    done < "$STATE_FILE"
+    
+    rm "$STATE_FILE"
+    print_success "Dotfiles uninstalled"
+    echo
+}
+
+show_menu() {
+    clear
+    cat << 'EOF'
+╔══════════════════════════════════════════╗
+║       Dotfiles Installation Menu        ║
+╚══════════════════════════════════════════╝
+
+  1) Install All Configurations
+  2) Install Bash
+  3) Install i3 + i3status
+  4) Install Kitty
+  5) Install Rofi
+  6) Install Picom
+  7) Install Tmux
+  8) Install Neofetch
+  
+  u) Update All Configs
+  r) Uninstall All
+  q) Quit
+
+EOF
+    read -rp "Select option: " choice
+}
+
+interactive_mode() {
+    while true; do
+        show_menu
+        
+        case "$choice" in
+            1)
+                install_bash
+                install_i3
+                install_i3status
+                install_kitty
+                install_rofi
+                install_picom
+                install_tmux
+                install_neofetch
+                read -rp "Press Enter to continue..."
+                ;;
+            2) install_bash; read -rp "Press Enter to continue..." ;;
+            3) install_i3; install_i3status; read -rp "Press Enter to continue..." ;;
+            4) install_kitty; read -rp "Press Enter to continue..." ;;
+            5) install_rofi; read -rp "Press Enter to continue..." ;;
+            6) install_picom; read -rp "Press Enter to continue..." ;;
+            7) install_tmux; read -rp "Press Enter to continue..." ;;
+            8) install_neofetch; read -rp "Press Enter to continue..." ;;
+            u) update_config; read -rp "Press Enter to continue..." ;;
+            r) 
+                read -rp "Are you sure? (y/N): " confirm
+                [[ "$confirm" =~ ^[Yy]$ ]] && uninstall_config
+                read -rp "Press Enter to continue..."
+                ;;
+            q) print_info "Goodbye!"; exit 0 ;;
+            *) print_error "Invalid option"; sleep 1 ;;
+        esac
+    done
+}
 
 main() {
-    print_header
-    
-    echo "This script will symlink dotfiles from:"
-    echo "$DOTFILES_DIR"
-    echo
-    echo "Existing configurations will be backed up to:"
-    echo "$BACKUP_DIR"
-    echo
-    
-    if ! ask_confirmation "Continue with installation?" "y"; then
-        print_error "Installation cancelled"
-        exit 0
+    if [[ $# -eq 0 ]]; then
+        interactive_mode
+    else
+        case "$1" in
+            --all|-a) 
+                install_bash
+                install_i3
+                install_i3status
+                install_kitty
+                install_rofi
+                install_picom
+                install_tmux
+                install_neofetch
+                ;;
+            --bash|-b) install_bash ;;
+            --i3|-i) install_i3; install_i3status ;;
+            --kitty|-k) install_kitty ;;
+            --rofi|-r) install_rofi ;;
+            --tmux|-t) install_tmux ;;
+            --update|-u) update_config ;;
+            --uninstall) uninstall_config ;;
+            --help|-h)
+                cat << EOF
+Usage: $0 [OPTIONS]
+
+Options:
+  -a, --all        Install all configurations
+  -b, --bash       Install bash configuration
+  -i, --i3         Install i3 window manager
+  -k, --kitty      Install kitty terminal
+  -r, --rofi       Install rofi launcher
+  -t, --tmux       Install tmux
+  -u, --update     Update all installed configs
+  --uninstall      Remove all installed configs
+  -h, --help       Show this help message
+
+No options: Run interactive mode
+EOF
+                ;;
+            *) print_error "Unknown option: $1"; exit 1 ;;
+        esac
     fi
-    
-    echo
-    
-    if ask_confirmation "Install Bash configuration?" "y"; then
-        install_bash
-    fi
-    
-    if ask_confirmation "Install i3 window manager configuration?" "n"; then
-        install_i3
-        
-        if ask_confirmation "Install i3status configuration?" "y"; then
-            install_i3status
-        fi
-    fi
-    
-    if ask_confirmation "Install Kitty terminal configuration?" "n"; then
-        install_kitty
-    fi
-    
-    if ask_confirmation "Install Neofetch configuration?" "n"; then
-        install_neofetch
-    fi
-    
-    if ask_confirmation "Install Picom compositor configuration?" "n"; then
-        install_picom
-    fi
-    
-    if ask_confirmation "Install Rofi launcher configuration?" "n"; then
-        install_rofi
-    fi
-    if ask_confirmation "Install Tmux configuration?" "n"; then
-        install_tmux
-    fi
-    echo
-    print_success "Installation complete!"
     
     if [[ -d "$BACKUP_DIR" ]]; then
         echo
-        print_info "Your old configurations have been backed up to:"
-        echo "$BACKUP_DIR"
+        print_info "Backups saved to: $BACKUP_DIR"
     fi
-    
-    echo
-    print_info "You may need to restart your terminal or run: source ~/.bashrc"
 }
 
-main "$@"
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"
