@@ -1,9 +1,9 @@
 general {
     colors = true
-    interval = 5
-    color_good = "#73daca"
-    color_bad = "#f7768e"
-    color_degraded = "#e0af68"
+    interval = 2
+    color_good = "#6c7086"
+    color_degraded = "#7c6f64"
+    color_bad = "#5c5c5c"
     markup = "pango"
 }
 
@@ -11,41 +11,60 @@ order += "wireless _first_"
 order += "ethernet _first_"
 order += "cpu_usage"
 order += "memory"
+order += "disk /"
 order += "battery all"
+order += "volume master"
 order += "tztime local"
 
 wireless _first_ {
-    format_up = " %essid"
+    format_up = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%essid</span>"
     format_down = ""
 }
 
 ethernet _first_ {
-    format_up = " connected"
+    format_up = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>eth</span>"
     format_down = ""
 }
 
 cpu_usage {
-    format = " %usage"
-    max_threshold = 80
-    degraded_threshold = 60
+    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%usage</span>"
+    max_threshold = 90
+    degraded_threshold = 75
 }
 
 memory {
-    format = " %used"
-    threshold_degraded = "3G"
-    format_degraded = " %used"
+    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%used</span>"
+    threshold_degraded = "2G"
+    threshold_critical = "512M"
+}
+
+disk "/" {
+    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%percentage_used</span>"
+    low_threshold = 10
+    threshold_type = percentage_avail
 }
 
 battery all {
-    format = "%status %percentage"
+    format = "<span foreground='#6c7086'>%status</span> <span foreground='#a8a8a8'>%percentage</span>"
     format_down = ""
     status_chr = ""
     status_bat = ""
+    status_unk = ""
     status_full = ""
     low_threshold = 20
     threshold_type = percentage
+    integer_battery_capacity = true
+    hide_seconds = true
+}
+
+volume master {
+    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%volume</span>"
+    format_muted = "<span foreground='#5c5c5c'> </span><span foreground='#5c5c5c'>mute</span>"
+    device = "default"
+    mixer = "Master"
+    mixer_idx = 0
 }
 
 tztime local {
-    format = " %H:%M  %d %b"
+    format = "<span foreground='#6c7086'> </span><span foreground='#a8a8a8'>%H:%M</span> <span foreground='#4c4c4c'>·</span> <span foreground='#8c8c8c'>%d %b</span>"
 }

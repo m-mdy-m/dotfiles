@@ -1,84 +1,132 @@
 configuration {
-    display-drun: "  Applications";
-    display-run: "  Run";
-    display-window: "  Windows";
+    modi: "drun,run,window";
     show-icons: true;
     icon-theme: "Papirus-Dark";
-    font: "JetBrains Mono Medium 11";
-    modi: "drun,run,window";
+    font: "JetBrains Mono 10";
+    display-drun: "";
+    display-run: "";
+    display-window: "";
     terminal: "alacritty";
+    disable-history: false;
+    sidebar-mode: false;
 }
 
 * {
+    bg: #0a0a0a;
+    bg-alt: #141414;
+    fg: #a8a8a8;
+    fg-alt: #6c6c6c;
+    accent: #5c5c5c;
+    
     background-color: transparent;
-    text-color: #c0caf5;
-    font: "JetBrains Mono Medium 11";
+    text-color: @fg;
+    font: "JetBrains Mono 10";
 }
 
 window {
-    background-color: #1a1b26ee;
-    border: 1px;
-    border-color: #3b4261;
-    border-radius: 12px;
-    width: 28%;
+    transparency: "real";
+    background-color: @bg;
+    border: 1px solid;
+    border-color: #1a1a1a;
+    border-radius: 0px;
+    width: 480px;
     location: center;
-}
-
-prompt {
-    padding: 8px 12px;
-    background-color: #7aa2f7;
-    text-color: #1a1b26;
-    border-radius: 6px;
-    margin: 0px 8px 0px 0px;
-}
-
-entry {
-    padding: 8px 12px;
-    background-color: #16161e;
-    text-color: #c0caf5;
-    border-radius: 6px;
-    border: 1px;
-    border-color: #3b4261;
-}
-
-inputbar {
-    children: [ prompt, entry ];
-    border-radius: 6px;
-    margin: 0px 0px 20px 0px;
-}
-
-listview {
-    columns: 1;
-    lines: 8;
-    spacing: 4px;
-}
-
-element {
-    orientation: horizontal;
-    border-radius: 8px;
-    padding: 10px 12px;
-    border: 1px;
-    border-color: transparent;
-}
-
-element-icon {
-    size: 20px;
-    margin: 0px 12px 0px 0px;
-}
-
-element-text {
-    expand: true;
-    horizontal-align: 0;
-    vertical-align: 0.5;
-}
-
-element selected.normal {
-    background-color: #7aa2f722;
-    text-color: #7aa2f7;
-    border-color: #7aa2f7;
+    anchor: center;
+    padding: 0px;
 }
 
 mainbox {
-    children: [ inputbar, listview ];
-    padding: 20px;
+    enabled: true;
+    spacing: 0px;
+    background-color: transparent;
+    children: [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled: true;
+    spacing: 0px;
+    padding: 16px;
+    background-color: @bg;
+    text-color: @fg;
+    children: [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled: true;
+    padding: 8px 12px;
+    background-color: @bg-alt;
+    text-color: @fg-alt;
+}
+
+entry {
+    enabled: true;
+    padding: 8px 12px;
+    background-color: transparent;
+    text-color: @fg;
+    placeholder: "Search...";
+    placeholder-color: @fg-alt;
+}
+
+listview {
+    enabled: true;
+    columns: 1;
+    lines: 8;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    spacing: 0px;
+    padding: 8px;
+    background-color: @bg;
+    text-color: @fg;
+}
+
+element {
+    enabled: true;
+    spacing: 12px;
+    padding: 8px;
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @fg-alt;
+}
+
+element selected.normal {
+    background-color: @bg-alt;
+    text-color: @fg;
+}
+
+element-icon {
+    background-color: transparent;
+    text-color: inherit;
+    size: 20px;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    highlight: none;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+message {
+    enabled: true;
+    padding: 8px;
+    background-color: @bg-alt;
+    text-color: @fg;
+}
+
+textbox {
+    padding: 8px;
+    background-color: transparent;
+    text-color: @fg;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
 }

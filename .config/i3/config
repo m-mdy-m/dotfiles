@@ -1,37 +1,50 @@
+# ── i3 Configuration ──────────────────────────────────────────────────
 set $mod Mod4
+
+# ── Font ──────────────────────────────────────────────────────────────
 font pango:JetBrains Mono Medium 9
 
-set $bg-dark #0a0a0a
-set $bg-light #141414
-set $text-white #e8e8e8
-set $text-gray #6e6e6e
-set $accent #7aa2f7
-set $border-inactive #1a1a1a
-set $border-urgent #f7768e
+# ── Color Scheme ──────────────────────────────────────────────────────
+set $bg-dark     #0a0a0a
+set $bg-light    #141414
+set $bg-lighter  #1a1a1a
+set $fg-bright   #a8a8a8
+set $fg-normal   #808080
+set $fg-dim      #6c6c6c
+set $fg-darker   #4c4c4c
+set $accent      #6c7086
+set $urgent      #5c5c5c
 
-client.focused $accent $bg-light $text-white $accent
-client.focused_inactive $border-inactive $bg-dark $text-gray $border-inactive
-client.unfocused $border-inactive $bg-dark $text-gray $border-inactive
-client.urgent $border-urgent $border-urgent $text-white $border-urgent
+# Window colors          border      background  text        indicator
+client.focused           $accent     $bg-light   $fg-bright  $accent
+client.focused_inactive  $bg-lighter $bg-dark    $fg-dim     $bg-lighter
+client.unfocused         $bg-darker  $bg-dark    $fg-darker  $bg-darker
+client.urgent            $urgent     $urgent     $fg-bright  $urgent
 
+# ── Window Appearance ─────────────────────────────────────────────────
 default_border pixel 1
 default_floating_border pixel 1
 for_window [class=".*"] border pixel 1
 
+# ── Gaps ──────────────────────────────────────────────────────────────
 gaps inner 8
 gaps outer 4
 smart_gaps on
 smart_borders on
 hide_edge_borders smart
 
+# ── Startup Applications ──────────────────────────────────────────────
 exec --no-startup-id ~/.config/i3/random-bg.sh
 exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
+exec --no-startup-id picom --config ~/.config/picom/picom.conf
 exec_always --no-startup-id setxkbmap -layout us,ir -option grp:alt_shift_toggle
 exec --no-startup-id xset r rate 200 30
 
+# ── Media Keys ────────────────────────────────────────────────────────
 set $refresh_i3status killall -SIGUSR1 i3status
+
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +3% && $refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -3% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
@@ -39,50 +52,74 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 8
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 8
 
+# ── Core Keybindings ──────────────────────────────────────────────────
 floating_modifier $mod
 
+# Terminal
 bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec alacritty --class floating-terminal
+
+# Application launcher
 bindsym $mod+d exec rofi -show drun -theme ~/.config/rofi/config.rasi
 bindsym $mod+Shift+d exec rofi -show run -theme ~/.config/rofi/config.rasi
 bindsym $mod+Tab exec rofi -show window -theme ~/.config/rofi/config.rasi
 
+# Kill focused window
 bindsym $mod+Shift+q kill
+bindsym $mod+q kill
 
+# Screenshot
 bindsym Print exec --no-startup-id bash -c 'mkdir -p "$HOME/screenshot" && scrot "$HOME/screenshot/%Y-%m-%d_%H-%M-%S.png"'
+bindsym $mod+Print exec --no-startup-id bash -c 'mkdir -p "$HOME/screenshot" && scrot -s "$HOME/screenshot/%Y-%m-%d_%H-%M-%S.png"'
 
+# ── Window Navigation ─────────────────────────────────────────────────
+# Vim-style navigation
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
+
+# Arrow keys
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
+# ── Window Movement ───────────────────────────────────────────────────
+# Vim-style
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
+
+# Arrow keys
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
+# ── Window Splitting ──────────────────────────────────────────────────
 bindsym $mod+backslash split h
 bindsym $mod+minus split v
+bindsym $mod+v split toggle
 
+# ── Window State ──────────────────────────────────────────────────────
 bindsym $mod+f fullscreen toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
 
+# ── Layouts ───────────────────────────────────────────────────────────
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
-bindsym $mod+Shift+space floating toggle
-bindsym $mod+space focus mode_toggle
+# ── Scratchpad ────────────────────────────────────────────────────────
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+grave scratchpad show
 
-bindsym $mod+a focus parent
-
+# ── Workspaces ────────────────────────────────────────────────────────
 set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
@@ -94,6 +131,7 @@ set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
+# Switch to workspace
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
 bindsym $mod+3 workspace number $ws3
@@ -105,6 +143,7 @@ bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
+# Move to workspace
 bindsym $mod+Shift+1 move container to workspace number $ws1
 bindsym $mod+Shift+2 move container to workspace number $ws2
 bindsym $mod+Shift+3 move container to workspace number $ws3
@@ -116,20 +155,30 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
+# Move workspace to different output
+bindsym $mod+Control+h move workspace to output left
+bindsym $mod+Control+j move workspace to output down
+bindsym $mod+Control+k move workspace to output up
+bindsym $mod+Control+l move workspace to output right
+
+# ── i3 Control ────────────────────────────────────────────────────────
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes' 'i3-msg exit'"
 bindsym $mod+Shift+x exec i3lock -c 000000
 
+# ── Resize Mode ───────────────────────────────────────────────────────
 mode "resize" {
     bindsym h resize shrink width 10 px or 10 ppt
     bindsym j resize grow height 10 px or 10 ppt
     bindsym k resize shrink height 10 px or 10 ppt
     bindsym l resize grow width 10 px or 10 ppt
+    
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
     bindsym Right resize grow width 10 px or 10 ppt
+    
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym $mod+r mode "default"
@@ -137,11 +186,17 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# ── Floating Windows ──────────────────────────────────────────────────
 for_window [class="floating-terminal"] floating enable, resize set 900 600, move position center
 for_window [class="Pavucontrol"] floating enable, resize set 800 600, move position center
 for_window [class="Blueman-manager"] floating enable, resize set 700 500, move position center
 for_window [class="Nm-connection-editor"] floating enable, resize set 600 400, move position center
+for_window [class="Arandr"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [title="Preferences$"] floating enable
 
+# ── Status Bar ────────────────────────────────────────────────────────
 bar {
     status_command i3status -c ~/.config/i3status/config
     position top
@@ -156,12 +211,14 @@ bar {
     
     colors {
         background $bg-dark
-        statusline $text-white
-        separator $text-gray
-        focused_workspace $accent $accent $bg-dark
-        active_workspace $bg-light $bg-light $text-white
-        inactive_workspace $bg-dark $bg-dark $text-gray
-        urgent_workspace $border-urgent $border-urgent $text-white
-        binding_mode $border-urgent $border-urgent $text-white
+        statusline $fg-bright
+        separator $fg-darker
+        
+        # workspace_type     border      background  text
+        focused_workspace    $accent     $accent     $bg-dark
+        active_workspace     $bg-light   $bg-light   $fg-normal
+        inactive_workspace   $bg-dark    $bg-dark    $fg-dim
+        urgent_workspace     $urgent     $urgent     $fg-bright
+        binding_mode         $accent     $accent     $bg-dark
     }
 }
