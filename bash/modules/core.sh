@@ -87,8 +87,3 @@ export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 export BAT_THEME="base16"
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
-# ── Security ─────────────
-umask 022                     # Default file permissions
-
-# ── Performance ──────────
-ulimit -n 10240              # Increase file descriptor limit
