@@ -7,17 +7,11 @@ general {
     markup = "pango"
 }
 
-order += "ethernet _first_"
 order += "cpu_usage"
 order += "memory"
 order += "disk /"
 order += "battery all"
 order += "tztime local"
-
-ethernet _first_ {
-    format_up = "<span foreground='#7aa2f7'>%ip</span>"
-    format_down = "<span foreground='#4c4c4c'>disconnected</span>"
-}
 
 cpu_usage {
     format = "<span foreground='#6c6c6c'>cpu %usage</span>"
