@@ -15,9 +15,12 @@ alias -- -='cd -'
 
 # ── Listing ──────────────────────────────────────────────────────────
 alias ls='ls --color=auto --group-directories-first'
+alias l='ls -lh'
 alias ll='ls -lah'
 alias la='ls -A'
-alias lt='ls -laht'
+alias lt='ls -laht'    
+alias lsize='ls -lSrh'
+alias lx='ls -lXBh' 
 
 # ── File Operations ──────────────────────────────────────────────────
 alias cp='cp -iv'
@@ -85,22 +88,25 @@ alias grao='git remote add origin'
 # ── Docker ───────────────────────────────────────────────────────────
 alias d='docker'
 alias dc='docker compose'
-alias dps='docker ps'
-alias dpsa='docker ps -a'
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dpsa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 alias di='docker images'
 alias drmi='docker rmi'
 alias drm='docker rm'
 alias dex='docker exec -it'
 alias dlogs='docker logs -f'
 alias dstop='docker stop $(docker ps -q)'
-alias dclean='docker system prune -af --volumes'
-alias dkill='docker kill $(docker ps -q)'
+alias dclean='docker system prune -af'
 
 alias dcup='docker compose up -d'
 alias dcdown='docker compose down'
 alias dclogs='docker compose logs -f'
 alias dcps='docker compose ps'
 alias dcrestart='docker compose restart'
+alias dclogs='docker compose logs -f'
+
+# Docker shell
+dsh() { docker exec -it "$1" sh -c "bash || sh"; }
 
 # ── Tmux ─────────────────────────────────────────────────────────────
 alias t='tmux'
@@ -126,7 +132,9 @@ alias biggest='find . -type f -exec du -h {} + | sort -rh | head -20'
 alias diskspace='df -h | grep -E "^(/dev/|Filesystem)"'
 
 # ── Process Management ───────────────────────────────────────────────
-alias killport='kill_port'  # Function defined in functions.sh
+alias killport='kill_port'
+alias ps='ps auxf'
+alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
 alias psmem='ps auxf | sort -nr -k 4 | head -10'
 alias pscpu='ps auxf | sort -nr -k 3 | head -10'
 

@@ -1,28 +1,49 @@
 general {
     colors = true
-    interval = 5
-    color_good = "#4c4c4c"
-    color_degraded = "#4c4c4c"
+    interval = 2
+    color_good = "#6c6c6c"
+    color_degraded = "#5c5c5c"
     color_bad = "#4c4c4c"
     markup = "pango"
 }
 
-order += "wireless _first_"
+order += "ethernet _first_"
+order += "cpu_usage"
+order += "memory"
+order += "disk /"
 order += "battery all"
 order += "tztime local"
 
-wireless _first_ {
-    format_up = "<span foreground='#6c6c6c'>%essid</span>"
-    format_down = "<span foreground='#3c3c3c'>disconnected</span>"
+ethernet _first_ {
+    format_up = "<span foreground='#7aa2f7'>%ip</span>"
+    format_down = "<span foreground='#4c4c4c'>disconnected</span>"
+}
+
+cpu_usage {
+    format = "<span foreground='#6c6c6c'>cpu %usage</span>"
+    max_threshold = 75
+    degraded_threshold = 50
+}
+
+memory {
+    format = "<span foreground='#6c6c6c'>%used</span>"
+    threshold_degraded = "20%"
+    threshold_critical = "10%"
+    format_degraded = "<span foreground='#5c5c5c'>mem %used</span>"
+}
+
+disk "/" {
+    format = "<span foreground='#6c6c6c'>%avail</span>"
+    low_threshold = 10
+    threshold_type = gbytes_avail
 }
 
 battery all {
     format = "<span foreground='#6c6c6c'>%percentage</span>"
     format_down = ""
-    status_chr = ""
-    status_bat = ""
-    status_unk = ""
-    status_full = ""
+    status_chr = "chr"
+    status_bat = "bat"
+    status_full = "full"
     low_threshold = 20
     threshold_type = percentage
     integer_battery_capacity = true

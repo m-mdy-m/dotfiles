@@ -48,11 +48,6 @@ export COLORTERM=truecolor
 export CLICOLOR=1
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
-# ── Language Configuration ───────────────────────────────────────────
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
-
 # ── Path Configuration ───────────────────────────────────────────────
 add_to_path() {
     if [[ -d "$1" ]] && [[ ":$PATH:" != *":$1:"* ]]; then
@@ -63,12 +58,6 @@ add_to_path() {
 # Essential paths
 add_to_path "$HOME/.local/bin"
 add_to_path "$HOME/bin"
-
-export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" --no-use
-
-# Rust
-[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 # ── GPG Configuration ────────────────────────────────────────────────
 export GPG_TTY=$(tty)
